@@ -1,5 +1,6 @@
 ﻿using AssetTrackingSystem.Data;
 using AssetTrackingSystem.Models;
+using Microsoft.EntityFrameworkCore;
 
 AppDbContext context = new AppDbContext();
 
@@ -125,7 +126,60 @@ if (!context.Offices.Any())
 
     Console.WriteLine("Seed data saved successfully!");
 }
+
+
 else
 {
     Console.WriteLine("Data already exists. No new data added.");
 }
+
+// DISPLAY COMPUTER ASSETS
+Console.WriteLine("COMPUTER ASSETS");
+Console.WriteLine("-------------------------");
+
+List<ComputerAsset> computersData =
+    context.ComputerAssets
+    .Include(c => c.Office)
+    .ToList();
+
+foreach (ComputerAsset computer in computersData)
+{
+    Console.WriteLine(
+        $"Id: {computer.Id} | " +
+        $"Brand: {computer.Brand} | " +
+        $"Model: {computer.ModelName} | " +
+        $"Office: {computer.Office.OfficeName} | " +
+        $"User: {computer.EmployeeUserName}"
+    );
+}
+
+// UPDATE COMPUTER
+var computerToUpdate = context.ComputerAssets
+    .FirstOrDefault(x => x.Id == 1);
+
+if (computerToUpdate != null)
+{
+    computerToUpdate.Brand = "ASUS";
+
+    context.SaveChanges();
+
+    Console.WriteLine("Computer updated successfully!");
+
+
+    // DELETE COMPUTER
+    var computerToDelete = context.ComputerAssets
+        .FirstOrDefault(x => x.Id == 3);
+
+    if (computerToDelete != null)
+    {
+        context.ComputerAssets.Remove(computerToDelete);
+
+        context.SaveChanges();
+
+        Console.WriteLine("Computer deleted successfully!");
+    }
+
+
+
+}
+
