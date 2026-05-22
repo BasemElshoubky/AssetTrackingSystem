@@ -181,6 +181,62 @@ if (computerToDelete != null)
     Console.WriteLine("Computer deleted successfully!");
 }
 
+// FILTER LAPTOPS
+Console.WriteLine();
+Console.WriteLine("LAPTOPS ONLY");
+Console.WriteLine("-------------------------");
+
+var laptops = context.ComputerAssets
+    .Where(x => x.ComputerType == "Laptop")
+    .Include(x => x.Office)
+    .ToList();
+
+foreach (var laptop in laptops)
+{
+    Console.WriteLine(
+        $"Brand: {laptop.Brand} | " +
+        $"Model: {laptop.ModelName} | " +
+        $"Office: {laptop.Office.OfficeName}"
+    );
+}
+
+
+// SORT BY PURCHASE DATE
+Console.WriteLine();
+Console.WriteLine("SORTED BY PURCHASE DATE");
+Console.WriteLine("-------------------------");
+
+var sortedComputers = context.ComputerAssets
+    .OrderBy(x => x.PurchaseDate)
+    .ToList();
+
+foreach (var computer in sortedComputers)
+{
+    Console.WriteLine(
+        $"Brand: {computer.Brand} | " +
+        $"Purchase Date: {computer.PurchaseDate.ToShortDateString()}"
+    );
+}
+
+// MOBILE ASSETS
+Console.WriteLine();
+Console.WriteLine("MOBILE ASSETS");
+Console.WriteLine("-------------------------");
+
+var mobilesData = context.MobileAssets
+    .Include(x => x.Office)
+    .ToList();
+
+foreach (var mobile in mobilesData)
+{
+    Console.WriteLine(
+        $"Brand: {mobile.Brand} | " +
+        $"Model: {mobile.ModelName} | " +
+        $"Type: {mobile.MobileType} | " +
+        $"Office: {mobile.Office.OfficeName} | " +
+        $"User: {mobile.EmployeeUserName}"
+    );
+}
 
 static string GetAssetStatus(DateTime warrantyExpirationDate)
 {
