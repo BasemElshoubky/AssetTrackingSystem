@@ -149,7 +149,8 @@ foreach (ComputerAsset computer in computersData)
         $"Brand: {computer.Brand} | " +
         $"Model: {computer.ModelName} | " +
         $"Office: {computer.Office.OfficeName} | " +
-        $"User: {computer.EmployeeUserName}"
+        $"User: {computer.EmployeeUserName} | " +
+        $"Status: {GetAssetStatus(computer.WarrantyExpirationDate)}"
     );
 }
 
@@ -164,22 +165,37 @@ if (computerToUpdate != null)
     context.SaveChanges();
 
     Console.WriteLine("Computer updated successfully!");
-
-
-    // DELETE COMPUTER
-    var computerToDelete = context.ComputerAssets
-        .FirstOrDefault(x => x.Id == 3);
-
-    if (computerToDelete != null)
-    {
-        context.ComputerAssets.Remove(computerToDelete);
-
-        context.SaveChanges();
-
-        Console.WriteLine("Computer deleted successfully!");
-    }
-
-
-
 }
 
+
+// DELETE COMPUTER
+var computerToDelete = context.ComputerAssets
+    .FirstOrDefault(x => x.Id == 3);
+
+if (computerToDelete != null)
+{
+    context.ComputerAssets.Remove(computerToDelete);
+
+    context.SaveChanges();
+
+    Console.WriteLine("Computer deleted successfully!");
+}
+
+
+static string GetAssetStatus(DateTime warrantyExpirationDate)
+{
+    int remainingDays = (warrantyExpirationDate - DateTime.Now).Days;
+
+    if (remainingDays < 90)
+    {
+        return "YELLOW";
+    }
+    else if (remainingDays < 180)
+    {
+        return "RED";
+    }
+    else
+    {
+        return "NORMAL";
+    }
+}
